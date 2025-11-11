@@ -58,9 +58,12 @@ return {
         settings = {
           python = {
             analysis = {
-              autoSearchPaths = true, -- Авто-поиск venv
+              typeCheckingMode = "off",
+              autoSearchPaths = true,
               useLibraryCodeForTypes = true,
+              diagnosticMode = "openFilesOnly",
             },
+            pythonPath = "./.venv/bin/python",
           },
         },
       })
