@@ -11,7 +11,7 @@ brew install neovim
 ```
 2.
 ```bash
-git clone https://github.com/hxllmvdx/neovim-conf ~/.config/nvim
+git clone https://github.com/hxllmvdx/neovim-configuration ~/.config/nvim
 ```
 3. If you want to upload your own configuration to github - call:
 ```bash
