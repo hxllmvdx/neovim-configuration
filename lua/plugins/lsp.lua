@@ -44,14 +44,28 @@ return {
 
       -- Настройка clangd для C++20 (concepts)
       lspconfig.clangd.setup({
+        capabilities = clangd_capabilities,
         cmd = {
           "/opt/homebrew/opt/llvm/bin/clangd",
           "--background-index",
           "--clang-tidy",
-          "--header-insertion=never",
-          "--query-driver=/usr/bin/*,/opt/homebrew/opt/llvm/bin/*", -- ← Маска для ВСЕХ компиляторов
+          "--header-insertion=iwyu",
+          "--completion-style=detailed",
+          "--all-scopes-completion",
+          "--pch-storage=memory",
+          "--cross-file-rename",
+          "--compile-commands-dir=build",
+          "--query-driver=/opt/homebrew/opt/llvm/bin/clang++", -- ← Маска для ВСЕХ компиляторов
         },
         filetypes = { "c", "cpp", "objc", "objcpp" },
+        settings = {
+          clangd = {
+            fallbackFlags = {
+              "-I/opt/homebrew/include",
+              "-std=c++23",
+            },
+          },
+        },
       })
 
       lspconfig.pyright.setup({
