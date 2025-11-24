@@ -10,6 +10,9 @@ return {
         "pyright",
         -- C/C++ (с поддержкой C++20)
         "clangd",
+        -- CMake
+        "neocmakelsp", -- LSP для CMake
+        "cmakelang", -- форматтер для CMake
         -- C#
         "omnisharp",
         -- Rust
@@ -25,7 +28,7 @@ return {
 
   -- 2. Mason-LSPConfig: интеграция с LSPConfig
   {
-    "mason-org/mason-lspconfig.nvim",
+    "mason-org/mason.nvim",
     dependencies = { "neovim/nvim-lspconfig" },
     opts = {
       handlers = {
@@ -43,8 +46,8 @@ return {
       local lspconfig = require("lspconfig")
 
       -- Настройка clangd для C++20 (concepts)
+      -- ~/.config/nvim/lua/plugins/lsp.lua
       lspconfig.clangd.setup({
-        capabilities = clangd_capabilities,
         cmd = {
           "/opt/homebrew/opt/llvm/bin/clangd",
           "--background-index",
@@ -53,11 +56,17 @@ return {
           "--completion-style=detailed",
           "--all-scopes-completion",
           "--pch-storage=memory",
-          "--cross-file-rename",
+          -- УБРАТЬ: "--cross-file-rename",  (устаревший флаг)
           "--compile-commands-dir=build",
-          "--query-driver=/opt/homebrew/opt/llvm/bin/clang++", -- ← Маска для ВСЕХ компиляторов
+          "--query-driver=/opt/homebrew/opt/llvm/bin/clang++",
         },
         filetypes = { "c", "cpp", "objc", "objcpp" },
+        capabilities = (function()
+          local caps = vim.lsp.protocol.make_client_capabilities()
+          -- Исправить предупреждение об offsetEncoding
+          caps.offsetEncoding = { "utf-16" }
+          return caps
+        end)(),
         settings = {
           clangd = {
             fallbackFlags = {
@@ -66,6 +75,13 @@ return {
             },
           },
         },
+      })
+
+      lspconfig.neocmake.setup({
+        cmd = { "neocmakelsp", "stdio" }, -- Без аргумента --stdio
+        filetypes = { "cmake" },
+        root_dir = lspconfig.util.root_pattern("CMakeLists.txt", "build", ".git"),
+        single_file_support = true,
       })
 
       lspconfig.pyright.setup({

@@ -15,6 +15,7 @@ return {
         javascript = { "prettier" },
         typescript = { "prettier" },
         json = { "prettier" },
+        cmake = { "cmake_format" },
       },
     },
   },
